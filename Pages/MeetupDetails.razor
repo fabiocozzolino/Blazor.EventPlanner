@@ -9,9 +9,12 @@
 }
 else
 {
-    <h1>@meetup.Summary</h1>
-    
+    <h1>Meetup: @meetup.Summary</h1>
+    <p><b>Quando: </b>@meetup.Date</p>
+    <p><b>Speaker: </b>@meetup.Speaker</p>
+    <p>@meetup.Description</p>
     <br/>
+    <h4>Partecipanti</h4>
     <table class="table">
         <tbody>
             @foreach (var attendee in meetup.Attendees)
@@ -25,14 +28,15 @@ else
     </table>
 }
 
+<h4>Registrati</h4>
 <EditForm Model="@attendee" OnValidSubmit="@HandleValidSubmit">
     <DataAnnotationsValidator />
     <ValidationSummary />
 
-    <InputText id="firstName" @bind-Value="attendee.FirstName" />
-    <InputText id="lastName" @bind-Value="attendee.LastName" />
+    <InputText id="firstName" placeholder="Nome" @bind-Value="attendee.FirstName" />
+    <InputText id="lastName" placeholder="Cognome" @bind-Value="attendee.LastName" />
 
-    <button type="submit">Submit</button>
+    <button class="btn btn-primary" type="submit">Registrati</button>
 </EditForm>
 
 @code {
@@ -49,7 +53,6 @@ else
 
     private void HandleValidSubmit()
     {
-        MeetupService.AddAttendee(new Guid(meetupId), attendee);
-        NavMan.NavigateTo("/");
+        MeetupService.AddAttendee(new Guid(meetupId), new MeetupAttendee{FirstName = attendee.FirstName, LastName = attendee.LastName});
     }
 }

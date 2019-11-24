@@ -1,1 +1,47 @@
 ﻿@page "/NewMeetup"
+@using Blazor.EventPlanner.Data
+@inject MeetupService MeetupService
+@inject NavigationManager NavMan
+
+<h1>Nuovo Meetup</h1>
+
+<EditForm Model="@meetup" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <p>
+        <label for="Date">Data: </label>
+        <InputDate id="Data" class="form-control" 
+            @bind-Value="meetup.Date" />
+    </p>
+    <p>
+        <label for="Summary">Summary: </label>
+        <InputText id="Summary" class="form-control"
+            placeholder="Summary"
+            @bind-Value="meetup.Summary" />
+    </p>
+    <p>
+        <label for="Speaker">Speaker: </label>
+        <InputText id="Speaker" class="form-control"
+            placeholder="Speaker"
+            @bind-Value="meetup.Speaker" />
+    </p>
+
+    <button class="btn btn-primary" type="submit">crea meetup</button>
+</EditForm>
+
+
+@code {
+    private Meetup meetup {get;set;} = new Meetup();
+
+    protected override void OnInitialized()
+    {
+        meetup.Date = DateTime.Now;
+    }
+
+    private void HandleValidSubmit()
+    {
+        MeetupService.CreateMeetup(meetup.Date, meetup.Summary, meetup.Speaker);
+        NavMan.NavigateTo("/");
+    }
+}
