@@ -1,0 +1,55 @@
+﻿@page "/Details/{meetupId}"
+@using Blazor.EventPlanner.Data
+@inject MeetupService MeetupService
+@inject NavigationManager NavMan
+
+@if (meetup == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <h1>@meetup.Summary</h1>
+    
+    <br/>
+    <table class="table">
+        <tbody>
+            @foreach (var attendee in meetup.Attendees)
+            {
+                <tr>
+                    <td>@attendee.FirstName</td>
+                    <td>@attendee.LastName</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<EditForm Model="@attendee" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <InputText id="firstName" @bind-Value="attendee.FirstName" />
+    <InputText id="lastName" @bind-Value="attendee.LastName" />
+
+    <button type="submit">Submit</button>
+</EditForm>
+
+@code {
+    [Parameter]
+    public string meetupId {get;set;}
+
+    private Meetup meetup {get;set;}
+    private MeetupAttendee attendee = new MeetupAttendee();
+
+    protected override void OnParametersSet()
+    {
+        meetup = MeetupService.GetMeetup(new Guid(meetupId));
+    }
+
+    private void HandleValidSubmit()
+    {
+        MeetupService.AddAttendee(new Guid(meetupId), attendee);
+        NavMan.NavigateTo("/");
+    }
+}

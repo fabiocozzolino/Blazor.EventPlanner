@@ -1,0 +1,64 @@
+﻿@page "/"
+
+@using Blazor.EventPlanner.Data
+@inject NavigationManager NavigationManager
+@inject MeetupService MeetupService
+
+<h1>Meetup Planner</h1>
+
+I prossimi meetup in calendario.
+<br/>
+@if (meetups == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <button class="btn btn-primary" @onclick="CreateNew">Crea nuovo Meetup</button>
+    <br/>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Summary</th>
+                <th>Speaker</th>
+                <th>Attendees</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var meetup in meetups)
+            {
+                <tr>
+                    <td>@meetup.Date.ToShortDateString()</td>
+                    <td>@meetup.Summary</td>
+                    <td>@meetup.Speaker</td>
+                    <td>@meetup.Attendees.Count</td>
+                    <td>
+    <button class="btn btn-primary" @onclick="(() => Details(meetup))">dettagli</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+@code {
+    Meetup[] meetups;
+
+    protected override async Task OnInitializedAsync()
+    {
+        meetups = await MeetupService.GetForecastAsync(DateTime.Now);
+    }
+
+    void CreateNew()
+    {
+        NavigationManager.NavigateTo("/NewMeetup");
+    }
+
+    void Details(Meetup meetup)
+    {
+        NavigationManager.NavigateTo($"/Details/{meetup.Id.ToString()}");
+    }
+}
