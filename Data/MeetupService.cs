@@ -26,15 +26,20 @@ namespace Blazor.EventPlanner.Data
             });
             Meetups.Add(new Meetup{
                 Id = Guid.NewGuid(),
-                Date = DateTime.Now.AddDays(19),
-                Summary = "Fabio Cozzolino",
-                Speaker = ".NET Core 3"
+                Date = DateTime.Now.AddDays(-19),
+                Summary = ".NET Core 3",
+                Speaker = "Fabio Cozzolino"
             });
         }
 
         public Task<Meetup[]> GetForecastAsync(DateTime startDate)
         {
-            return Task.FromResult(Meetups.ToArray());
+            return Task.FromResult(Meetups.Where(m => m.Date >= startDate).ToArray());
+        }
+
+        public Task<Meetup[]> GetPastMeetupAsync(DateTime startDate)
+        {
+            return Task.FromResult(Meetups.Where(m => m.Date < startDate).ToArray());
         }
 
         public void CreateMeetup(DateTime date, string summary, string speaker)

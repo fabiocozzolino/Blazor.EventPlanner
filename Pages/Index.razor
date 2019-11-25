@@ -1,23 +1,21 @@
 ﻿@page "/"
 
+@using System.Linq
 @using Blazor.EventPlanner.Data
 @inject NavigationManager NavigationManager
 @inject MeetupService MeetupService
 
 <h1>Meetup Planner</h1>
 
-I prossimi meetup in calendario.
+
 <br/>
-@if (meetups == null)
+<p>
+    <button class="btn btn-primary" @onclick="CreateNew">Crea nuovo Meetup</button>
+</p>
+<br/>
+@if (upcomingMeetups?.Count() > 0)
 {
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <p>
-        <button class="btn btn-primary" @onclick="CreateNew">Crea nuovo Meetup</button>
-    </p>
-    <br/>
+    <h3>I prossimi meetup in calendario</h3>
     <table class="table">
         <thead>
             <tr>
@@ -29,10 +27,40 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var meetup in meetups)
+            @foreach (var meetup in upcomingMeetups)
             {
                 <tr>
-                    <td>@meetup.Date.ToShortDateString()</td>
+                    <td>@meetup.Date.ToString()</td>
+                    <td>@meetup.Summary</td>
+                    <td>@meetup.Speaker</td>
+                    <td>@meetup.Attendees.Count</td>
+                    <td>
+    <button class="btn btn-primary" @onclick="(() => Details(meetup))">dettagli</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+<br/>
+@if (pastMeetups?.Count() > 0)
+{
+    <h3>I meetup passati</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Summary</th>
+                <th>Speaker</th>
+                <th>Attendees</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var meetup in pastMeetups)
+            {
+                <tr>
+                    <td>@meetup.Date.ToString()</td>
                     <td>@meetup.Summary</td>
                     <td>@meetup.Speaker</td>
                     <td>@meetup.Attendees.Count</td>
@@ -47,11 +75,13 @@ else
 
 
 @code {
-    Meetup[] meetups;
+    Meetup[] upcomingMeetups;
+    Meetup[] pastMeetups;
 
     protected override async Task OnInitializedAsync()
     {
-        meetups = await MeetupService.GetForecastAsync(DateTime.Now);
+        upcomingMeetups = await MeetupService.GetForecastAsync(DateTime.Now);
+        pastMeetups = await MeetupService.GetPastMeetupAsync(DateTime.Now);
     }
 
     void CreateNew()
