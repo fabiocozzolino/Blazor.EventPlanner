@@ -58,11 +58,11 @@ namespace Blazor.EventPlanner.Data
         void Save(Meetup meetup);
     }
 
-    public class MeetupRepository : IMeetupRepository
+    public class InMemoryMeetupRepository : IMeetupRepository
     {
         private static readonly List<Meetup> Meetups = new List<Meetup>();
 
-        public MeetupRepository()
+        public InMemoryMeetupRepository()
         {
             Meetups.Add(new Meetup{
                 Id = Guid.NewGuid(),
