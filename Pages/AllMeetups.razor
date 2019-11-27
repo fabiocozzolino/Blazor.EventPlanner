@@ -1,0 +1,17 @@
+﻿@page "/AllMeetups"
+
+@using System.Linq
+@using Blazor.EventPlanner.Data
+@inject NavigationManager NavigationManager
+@inject MeetupService MeetupService
+
+<MeetupList Title="Tutti i meetups" Meetups="@allMeetups" />
+
+@code {
+    Meetup[] allMeetups;
+
+    protected override async Task OnInitializedAsync()
+    {
+        allMeetups = await MeetupService.GetAllMeetupsAsync();
+    }
+}

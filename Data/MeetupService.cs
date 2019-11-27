@@ -7,9 +7,62 @@ namespace Blazor.EventPlanner.Data
 {
     public class MeetupService
     {
+        private readonly IMeetupRepository repository;
+
+        public MeetupService(IMeetupRepository repository)
+        {
+            this.repository = repository;
+        }
+
+        public Task<Meetup[]> GetUpcomingMeetupsAsync(DateTime startDate)
+        {
+            return Task.FromResult(repository.ReadAll().Where(m => m.Date >= startDate).ToArray());
+        }
+
+        public Task<Meetup[]> GetPastMeetupsAsync(DateTime startDate)
+        {
+            return Task.FromResult(repository.ReadAll().Where(m => m.Date < startDate).ToArray());
+        }
+
+        public Task<Meetup[]> GetAllMeetupsAsync()
+        {
+            return Task.FromResult(repository.ReadAll().ToArray());
+        }
+
+        public void CreateMeetup(DateTime date, string summary, string speaker)
+        {
+            repository.Save(new Meetup{
+                Id = Guid.NewGuid(),
+                Date=date,
+                Summary=summary,
+                Speaker=speaker
+            });
+        }
+
+        public void AddAttendee(Guid meetupId, MeetupAttendee attendee)
+        {
+            var currentMeetup = GetMeetup(meetupId);
+            currentMeetup.Attendees.Add(attendee);
+        }
+
+        public Meetup GetMeetup(Guid meetupId)
+        {
+            return repository.Read(meetupId);
+        }
+    }
+
+    public interface IMeetupRepository
+    {
+        Meetup Read(Guid id);
+        List<Meetup> ReadAll();
+        void Save(Meetup meetup);
+    }
+
+    public class MeetupRepository : IMeetupRepository
+    {
         private static readonly List<Meetup> Meetups = new List<Meetup>();
 
-        public MeetupService()
+        public MeetupRepository()
         {
             Meetups.Add(new Meetup{
                 Id = Guid.NewGuid(),
@@ -32,35 +85,19 @@ namespace Blazor.EventPlanner.Data
             });
         }
 
-        public Task<Meetup[]> GetForecastAsync(DateTime startDate)
+        public Meetup Read(Guid meetup)
         {
-            return Task.FromResult(Meetups.Where(m => m.Date >= startDate).ToArray());
+            return Meetups.FirstOrDefault(m => m.Id == meetup);
         }
 
-        public Task<Meetup[]> GetPastMeetupAsync(DateTime startDate)
+        public List<Meetup> ReadAll()
         {
-            return Task.FromResult(Meetups.Where(m => m.Date < startDate).ToArray());
+            return Meetups;
         }
 
-        public void CreateMeetup(DateTime date, string summary, string speaker)
+        public void Save(Meetup meetup)
         {
-            Meetups.Add(new Meetup{
-                Id = Guid.NewGuid(),
-                Date=date,
-                Summary=summary,
-                Speaker=speaker
-            });
-        }
-
-        public void AddAttendee(Guid meetupId, MeetupAttendee attendee)
-        {
-            var currentMeetup = Meetups.FirstOrDefault(m => m.Id == meetupId);
-            currentMeetup.Attendees.Add(attendee);
-        }
-
-        public Meetup GetMeetup(Guid meetupId)
-        {
-            return Meetups.FirstOrDefault(m => m.Id == meetupId);
+            Meetups.Add(meetup);
         }
     }
 }

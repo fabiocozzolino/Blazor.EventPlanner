@@ -29,6 +29,7 @@ namespace Blazor.EventPlanner
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddSingleton<MeetupService>();
+            services.AddSingleton<IMeetupRepository, MeetupRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,0 +1,46 @@
+@using Blazor.EventPlanner.Data
+@inject MeetupService MeetupService
+@inject NavigationManager NavMan
+
+@if (Meetups?.Count() > 0)
+{
+    <h3>@Title</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Summary</th>
+                <th>Speaker</th>
+                <th>Attendees</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var meetup in Meetups)
+            {
+                <tr>
+                    <td>@meetup.Date.ToString()</td>
+                    <td>@meetup.Summary</td>
+                    <td>@meetup.Speaker</td>
+                    <td>@meetup.Attendees.Count</td>
+                    <td>
+                        <button class="btn btn-primary" @onclick="(() => Details(meetup))">dettagli</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code
+{
+    [Parameter]
+    public string Title {get;set;}
+    [Parameter]
+    public Meetup[] Meetups {get;set;}
+
+    void Details(Meetup meetup)
+    {
+        NavMan.NavigateTo($"/Details/{meetup.Id.ToString()}");
+    }
+}
