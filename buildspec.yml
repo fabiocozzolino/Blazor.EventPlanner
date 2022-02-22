@@ -8,11 +8,8 @@ phases:
         commands:
             - dotnet build -c Release ./Blazor.EventPlanner.csproj
             - dotnet publish -o deployfolder
-            - cd deployfolder
-            - zip ../site.zip *
-            - cd ..
-            - zip blazortest.zip site.zip aws-windows-deployment-manifest.json
             
 artifacts:
     files:
-        - blazortest.zip
+        - deployfolder/*.*
+        - aws-windows-deployment-manifest.json
