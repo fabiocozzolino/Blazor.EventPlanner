@@ -7,3 +7,8 @@ phases:
     build:
         commands:
             - dotnet build -c Release ./Blazor.EventPlanner.csproj
+            - dotnet publish -o deployfolder
+            
+artifacts:
+  files:
+    - deployfolder/*
