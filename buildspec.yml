@@ -10,5 +10,9 @@ phases:
             - dotnet publish -o deployfolder
             
 artifacts:
-  files:
-    - deployfolder/*
+    files:
+        - deployfolder/*
+    secondary-artifacts:
+        artifactIdentifier:
+            files: 
+                - deployfolder/*
