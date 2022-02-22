@@ -13,7 +13,7 @@ artifacts:
     files:
         - deployfolder/*
     secondary-artifacts:
-        artifactIdentifier:
+        artifact1:
             files: 
                 - deployfolder/*
             name:
