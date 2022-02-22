@@ -1,0 +1,9 @@
+version: 0.2
+
+phases:
+    install:
+        runtime-versions:
+            dotnet: 3.1
+    build:
+        commands:
+            - dotnet build -c Release ./Blazor.EventPlanner/Blazor.EventPlanner.csproj
